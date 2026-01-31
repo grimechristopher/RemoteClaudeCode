@@ -1,0 +1,25 @@
+{
+  "name": "remote-claude-code",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.2.29",
+    "drizzle-orm": "^0.45.1",
+    "node-cron": "^4.2.1",
+    "nuxt": "^4.3.0",
+    "postgres": "^3.4.8",
+    "vue": "^3.5.27",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@types/node-cron": "^3.0.11",
+    "drizzle-kit": "^0.31.8"
+  }
+}
