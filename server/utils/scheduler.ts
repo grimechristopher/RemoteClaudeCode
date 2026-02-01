@@ -1,8 +1,6 @@
 import cron, { type ScheduledTask } from 'node-cron'
-import { db } from '~/server/utils/db'
-import { scheduledJobs } from '~/server/db/schema'
+import { scheduledJobs } from '../db/schema'
 import { eq } from 'drizzle-orm'
-import { runClaude } from '~/server/utils/claude'
 
 const activeTasks = new Map<string, ScheduledTask>()
 

@@ -1,5 +1,4 @@
-import { db } from '~/server/utils/db'
-import { sessions } from '~/server/db/schema'
+import { sessions } from '../../db/schema'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)

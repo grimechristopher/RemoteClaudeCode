@@ -1,7 +1,5 @@
-import { db } from '~/server/utils/db'
-import { scheduledJobs } from '~/server/db/schema'
+import { scheduledJobs } from '../../db/schema'
 import { eq } from 'drizzle-orm'
-import { unregisterJob } from '~/server/utils/scheduler'
 
 export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, 'id')!

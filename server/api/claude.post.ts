@@ -1,6 +1,4 @@
-import { runClaude } from '~/server/utils/claude'
-import { db } from '~/server/utils/db'
-import { messages, sessions } from '~/server/db/schema'
+import { messages, sessions } from '../db/schema'
 import { eq } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {

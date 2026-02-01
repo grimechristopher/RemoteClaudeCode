@@ -1,5 +1,4 @@
-import { db } from '~/server/utils/db'
-import { sessions } from '~/server/db/schema'
+import { sessions } from '../../db/schema'
 import { eq } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {

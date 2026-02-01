@@ -1,5 +1,4 @@
-import { db } from '~/server/utils/db'
-import { scheduledJobs } from '~/server/db/schema'
+import { scheduledJobs } from '../../db/schema'
 import { desc } from 'drizzle-orm'
 
 export default defineEventHandler(async () => {

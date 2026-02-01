@@ -1,6 +1,4 @@
-import { db } from '~/server/utils/db'
-import { scheduledJobs } from '~/server/db/schema'
-import { registerJob } from '~/server/utils/scheduler'
+import { scheduledJobs } from '../../db/schema'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody<{
