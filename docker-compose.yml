@@ -1,0 +1,14 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      # Mount Obsidian vault — adjust path to your vault
+      - /path/to/obsidian/vault:/data/obsidian
+      # Mount Claude Code config
+      - ~/.claude:/root/.claude
+    restart: unless-stopped
+    network_mode: host
