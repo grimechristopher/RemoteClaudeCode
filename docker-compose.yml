@@ -6,9 +6,13 @@ services:
     env_file:
       - .env
     volumes:
-      # Mount Obsidian vault — adjust path to your vault
-      - /path/to/obsidian/vault:/data/obsidian
-      # Mount Claude Code config
-      - ~/.claude:/root/.claude
+      # Obsidian vault (read/write) — adjust path
+      - ${NOTES_PATH:-/path/to/obsidian/vault}:/data/notes
+      # Code repos (read/write) — adjust path
+      - ${REPOS_PATH:-/path/to/repos}:/data/repos
+      # Claude Code config and MCP servers
+      - ${CLAUDE_CONFIG:-~/.claude}:/root/.claude
     restart: unless-stopped
+    # Use host network for access to local services (Nextcloud, Postgres)
+    # Remove this and use explicit ports if you want more isolation
     network_mode: host
