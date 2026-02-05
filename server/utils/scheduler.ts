@@ -1,6 +1,9 @@
-import cron, { type ScheduledTask } from 'node-cron'
+import * as cronModule from 'node-cron'
 import { scheduledJobs } from '../db/schema'
 import { eq } from 'drizzle-orm'
+
+const cron = cronModule.default || cronModule
+type ScheduledTask = any
 
 const activeTasks = new Map<string, ScheduledTask>()
 
