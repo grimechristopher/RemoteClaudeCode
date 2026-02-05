@@ -67,3 +67,24 @@ button {
 code, pre {
   font-family: var(--font-mono);
 }
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+  html, body, #__nuxt {
+    font-size: 13px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 3px;
+  }
+}
+
+/* Safe area for notched phones */
+@supports (padding-top: env(safe-area-inset-top)) {
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}

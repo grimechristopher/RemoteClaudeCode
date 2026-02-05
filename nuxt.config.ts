@@ -7,7 +7,10 @@ export default defineNuxtConfig({
     head: {
       title: 'Remote Claude Code',
       meta: [
-        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1' },
+        { name: 'theme-color', content: '#0a0a0a' },
+        { name: 'apple-mobile-web-app-capable', content: 'yes' },
+        { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
       ],
       link: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
