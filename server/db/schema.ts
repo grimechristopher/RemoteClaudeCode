@@ -17,6 +17,7 @@ export const sessions = pgTable('sessions', {
   id: uuid('id').primaryKey().defaultRandom(),
   title: text('title'),
   claudeSessionId: text('claude_session_id'),
+  systemPrompt: text('system_prompt'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 }, (table) => [
@@ -32,6 +33,19 @@ export const messages = pgTable('messages', {
     name: string
     input: Record<string, unknown>
     output?: unknown
+  }>>().default([]),
+  feedItems: jsonb('feed_items').$type<Array<{
+    type: 'user' | 'text' | 'tool_call' | 'tool_result' | 'result' | 'error'
+    content?: string
+    tool?: string
+    input?: Record<string, unknown>
+    output?: string
+    summary?: string
+    category?: string
+    isError?: boolean
+    cost?: number
+    duration?: number
+    timestamp: string
   }>>().default([]),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 }, (table) => [
