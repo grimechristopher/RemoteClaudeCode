@@ -97,7 +97,7 @@ onMounted(fetchSessions)
       :is-streaming="isStreaming"
     />
 
-    <ChatChatInput
+    <ChatInput
       :disabled="isStreaming"
       @send="sendMessage"
     />
