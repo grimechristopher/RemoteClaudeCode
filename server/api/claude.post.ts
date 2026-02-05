@@ -11,40 +11,47 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: 'prompt and sessionId required' })
   }
 
-  // Save user message
+  // Save user message with feed item
+  const userFeedItem = {
+    type: 'user' as const,
+    content: prompt,
+    timestamp: new Date().toISOString(),
+  }
   await db.insert(messages).values({
     sessionId,
     role: 'user',
     content: prompt,
+    feedItems: [userFeedItem],
   })
 
-  // Look up existing Claude session ID for resumption
+  // Look up existing Claude session ID and system prompt
   const session = await db.query.sessions.findFirst({
     where: eq(sessions.id, sessionId),
   })
 
   const eventStream = createEventStream(event)
 
-  // Run Claude in background, stream results
   const claudePromise = runClaude(prompt, {
     onMessage: async (data) => {
       await eventStream.push(JSON.stringify(data))
     },
   }, {
     sessionId: session?.claudeSessionId || undefined,
+    systemPrompt: session?.systemPrompt || undefined,
   })
 
   claudePromise
-    .then(async ({ claudeSessionId, fullContent, toolCalls }) => {
-      // Save assistant message
+    .then(async ({ claudeSessionId, fullContent, toolCalls, feedItems }) => {
+      // Save assistant message with feed items
       await db.insert(messages).values({
         sessionId,
         role: 'assistant',
         content: fullContent,
         toolCalls,
+        feedItems,
       })
 
-      // Update session with Claude session ID and title
+      // Update session
       const updateData: Record<string, unknown> = {
         updatedAt: new Date(),
       }
