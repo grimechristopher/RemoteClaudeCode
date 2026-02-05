@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import type { ChatMessage, ToolCall } from '~/types'
+import type { FeedItem } from '~/types'
 
 const props = defineProps<{
-  messages: ChatMessage[]
-  activeTools: ToolCall[]
+  items: FeedItem[]
   isStreaming: boolean
 }>()
 
@@ -17,45 +16,41 @@ function scrollToBottom() {
   })
 }
 
-watch(() => props.messages.length, scrollToBottom)
-watch(() => props.messages[props.messages.length - 1]?.content, scrollToBottom)
-watch(() => props.activeTools.length, scrollToBottom)
+watch(() => props.items.length, scrollToBottom)
+watch(
+  () => props.items[props.items.length - 1]?.content,
+  scrollToBottom,
+)
 
 onMounted(scrollToBottom)
 </script>
 
 <template>
-  <div ref="container" class="message-list">
-    <div v-if="!messages.length" class="empty-state">
+  <div ref="container" class="feed">
+    <div v-if="!items.length" class="empty-state">
       <div class="empty-icon">~</div>
       <div class="empty-text">Start a conversation</div>
     </div>
-    <ChatMessageBubble
-      v-for="(msg, i) in messages"
+    <ChatFeedItem
+      v-for="(item, i) in items"
       :key="i"
-      :message="msg"
+      :item="item"
+      :is-active="isStreaming && item.type === 'tool_call' && i === items.length - 1"
     />
-    <div v-if="activeTools.length" class="active-tools">
-      <ChatToolExecution
-        v-for="(tool, i) in activeTools"
-        :key="i"
-        :tool="tool"
-      />
-    </div>
-    <div v-if="isStreaming" class="streaming-indicator">
+    <div v-if="isStreaming && items[items.length - 1]?.type !== 'tool_call'" class="streaming-indicator">
       <span class="dot" /><span class="dot" /><span class="dot" />
     </div>
   </div>
 </template>
 
 <style scoped>
-.message-list {
+.feed {
   flex: 1;
   overflow-y: auto;
   padding: 24px 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
 .empty-state {
@@ -77,13 +72,6 @@ onMounted(scrollToBottom)
 
 .empty-text {
   font-size: 15px;
-}
-
-.active-tools {
-  padding: 0 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
 }
 
 .streaming-indicator {
