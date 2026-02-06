@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "tsx watch server/index.ts",
     "start": "tsx server/index.ts",
-    "build": "cd frontend-new && npm run build:prod"
+    "build": "cd frontend-new && npm run build:prod",
+    "test": "vitest"
   },
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.29",
@@ -20,7 +21,10 @@
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
     "@types/node-cron": "^3.0.11",
-    "drizzle-kit": "^0.31.8"
+    "@vitest/ui": "^4.0.18",
+    "drizzle-kit": "^0.31.8",
+    "vitest": "^4.0.18"
   }
 }
