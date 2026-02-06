@@ -8,11 +8,18 @@ RUN apt-get update && apt-get install -y git curl && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
+# Install backend dependencies
 COPY package*.json ./
 RUN npm ci
 
-COPY . .
-RUN npm run build
+# Build frontend
+COPY frontend-new ./frontend-new
+WORKDIR /app/frontend-new
+RUN npm ci && npm run build:prod
+
+# Copy backend code
+WORKDIR /app
+COPY server ./server
 
 # Create data directories for mounts
 RUN mkdir -p /data/notes /data/repos
@@ -23,4 +30,4 @@ ENV NODE_ENV=production
 
 EXPOSE 3000
 
-CMD ["node", ".output/server/index.mjs"]
+CMD ["npx", "tsx", "server/index.ts"]
