@@ -38,6 +38,34 @@ yarn dev
 bun run dev
 ```
 
+## Docker Deployment
+
+For production deployment with Obsidian sync and Nextcloud integration:
+
+1. **Configure environment:**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your settings
+   ```
+
+2. **Set up Claude MCP:**
+   ```bash
+   cp claude-config/mcp_settings.json.example ~/.claude/mcp_settings.json
+   # Edit with your Nextcloud credentials
+   ```
+
+3. **Initial sync:**
+   ```bash
+   ./scripts/initial-sync.sh
+   ```
+
+4. **Start services:**
+   ```bash
+   docker-compose up -d
+   ```
+
+See [Docker Setup Guide](docs/DOCKER_SETUP.md) for complete instructions.
+
 ## Production
 
 Build the application for production:
