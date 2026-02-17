@@ -1,18 +1,75 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: remoteclaudecode
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: remoteclaudecode
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - internal
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U remoteclaudecode"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  sync-service:
+    image: rclone/rclone:latest
+    command: >
+      bisync /data/notes nextcloud:Obsidian/General Notebook
+      --conflict-resolve newer
+      --resilient
+      --recover
+      --check-access
+      --filters-file /config/bisync-filter.txt
+      --verbose
+    environment:
+      RCLONE_CONFIG_NEXTCLOUD_TYPE: webdav
+      RCLONE_CONFIG_NEXTCLOUD_URL: ${NEXTCLOUD_URL}
+      RCLONE_CONFIG_NEXTCLOUD_VENDOR: nextcloud
+      RCLONE_CONFIG_NEXTCLOUD_USER: ${NEXTCLOUD_USERNAME}
+      RCLONE_CONFIG_NEXTCLOUD_PASS: ${NEXTCLOUD_PASSWORD}
+    volumes:
+      - ${OBSIDIAN_VAULT_PATH}:/data/notes
+      - ./rclone-config:/config:ro
+    networks:
+      - internal
+    restart: unless-stopped
+
   app:
     build: .
     ports:
       - "3000:3000"
-    env_file:
-      - .env
+    environment:
+      DATABASE_URL: postgresql://remoteclaudecode:${POSTGRES_PASSWORD}@postgres:5432/remoteclaudecode
+      NEXTCLOUD_URL: ${NEXTCLOUD_URL}
+      NEXTCLOUD_USERNAME: ${NEXTCLOUD_USERNAME}
+      NEXTCLOUD_PASSWORD: ${NEXTCLOUD_PASSWORD}
+      NEXTCLOUD_IP: ${NEXTCLOUD_IP}
     volumes:
-      # Obsidian vault (read/write) — adjust path
-      - ${NOTES_PATH:-/path/to/obsidian/vault}:/data/notes
-      # Code repos (read/write) — adjust path
-      - ${REPOS_PATH:-/path/to/repos}:/data/repos
-      # Claude Code config and MCP servers
-      - ${CLAUDE_CONFIG:-~/.claude}:/root/.claude
+      - ${OBSIDIAN_VAULT_PATH}:/data/notes
+      - ${REPOS_PATH}:/data/repos
+      - ${CLAUDE_CONFIG}:/root/.claude:ro
+    networks:
+      - internal
+      - internet
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      postgres:
+        condition: service_healthy
+      sync-service:
+        condition: service_started
     restart: unless-stopped
-    # Use host network for access to local services (Nextcloud, Postgres)
-    # Remove this and use explicit ports if you want more isolation
-    network_mode: host
+
+volumes:
+  postgres_data:
+
+networks:
+  internal:
+    driver: bridge
+  internet:
+    driver: bridge
