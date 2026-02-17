@@ -1,0 +1,4 @@
+# Ignore rclone runtime files
+rclone.conf
+*.lock
+*.log

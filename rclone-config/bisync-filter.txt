@@ -1,0 +1,16 @@
+# Exclude Obsidian workspace and cache
+- .obsidian/workspace*
+- .obsidian/cache/
+- .obsidian/plugins/*/node_modules/
+
+# Exclude trash
+- .trash/
+
+# Exclude system files
+- .DS_Store
+- Thumbs.db
+- desktop.ini
+
+# Exclude version control
+- .git/
+- .gitignore
