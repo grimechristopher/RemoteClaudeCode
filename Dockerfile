@@ -10,9 +10,6 @@ RUN apt-get update && apt-get install -y \
 # Install Claude Code CLI globally
 RUN npm install -g @anthropic-ai/claude-code
 
-# Install Nextcloud MCP server globally
-RUN npm install -g @cbcoutinho/nextcloud-mcp-server
-
 WORKDIR /app
 
 # Install backend dependencies
