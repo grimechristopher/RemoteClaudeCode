@@ -1,4 +1,24 @@
 import { query } from '@anthropic-ai/claude-agent-sdk'
+import { readFileSync, existsSync } from 'fs'
+import { join } from 'path'
+
+// Load MCP servers configuration
+function loadMcpServers(): Record<string, any> | undefined {
+  const homeDir = process.env.HOME || '/home/node'
+  const mcpConfigPath = join(homeDir, '.claude', 'mcp_servers.json')
+
+  if (existsSync(mcpConfigPath)) {
+    try {
+      const configContent = readFileSync(mcpConfigPath, 'utf-8')
+      const config = JSON.parse(configContent)
+      console.log('✅ Loaded MCP servers:', Object.keys(config.mcpServers || {}))
+      return config.mcpServers
+    } catch (error) {
+      console.error('❌ Error loading MCP servers:', error)
+    }
+  }
+  return undefined
+}
 
 function categorize(toolName: string): string {
   const categories: Record<string, string> = {
@@ -53,6 +73,13 @@ export async function runClaude(
   }
   if (options?.systemPrompt) {
     queryOptions.systemPrompt = options.systemPrompt
+  }
+
+  // Load and configure MCP servers
+  const mcpServers = loadMcpServers()
+  if (mcpServers) {
+    queryOptions.mcpServers = mcpServers
+    queryOptions.allowedTools = ['*'] // Allow all MCP tools
   }
 
   const claudeQuery = query({

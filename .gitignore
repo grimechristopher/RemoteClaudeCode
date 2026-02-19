@@ -24,3 +24,4 @@ logs
 !.env.example
 rclone-config/*.md5
 docker-compose*.backup
+mcp-servers/
