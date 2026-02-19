@@ -18,14 +18,8 @@ services:
 
   sync-service:
     image: rclone/rclone:latest
-    command: >
-      bisync /data/notes nextcloud:Obsidian/General Notebook
-      --conflict-resolve newer
-      --resilient
-      --recover
-      --check-access
-      --filters-file /config/bisync-filter.txt
-      --verbose
+    entrypoint: ["/bin/sh"]
+    command: /scripts/sync-loop.sh
     environment:
       RCLONE_CONFIG_NEXTCLOUD_TYPE: webdav
       RCLONE_CONFIG_NEXTCLOUD_URL: ${NEXTCLOUD_URL}
@@ -34,7 +28,9 @@ services:
       RCLONE_CONFIG_NEXTCLOUD_PASS: ${NEXTCLOUD_PASSWORD}
     volumes:
       - ${OBSIDIAN_VAULT_PATH}:/data/notes
-      - ./rclone-config:/config:ro
+      - ./rclone-config:/config
+      - rclone_cache:/root/.cache/rclone
+      - ./docker/sync-loop.sh:/scripts/sync-loop.sh:ro
     networks:
       - internal
     restart: unless-stopped
@@ -49,10 +45,13 @@ services:
       NEXTCLOUD_USERNAME: ${NEXTCLOUD_USERNAME}
       NEXTCLOUD_PASSWORD: ${NEXTCLOUD_PASSWORD}
       NEXTCLOUD_IP: ${NEXTCLOUD_IP}
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
     volumes:
       - ${OBSIDIAN_VAULT_PATH}:/data/notes
       - ${REPOS_PATH}:/data/repos
-      - ${CLAUDE_CONFIG}:/root/.claude:ro
+      - ${CLAUDE_CONFIG}/.credentials.json:/tmp/.credentials.json:ro
+      - claude_config_data:/home/node/.claude
     networks:
       - internal
       - internet
@@ -67,6 +66,8 @@ services:
 
 volumes:
   postgres_data:
+  rclone_cache:
+  claude_config_data:
 
 networks:
   internal:

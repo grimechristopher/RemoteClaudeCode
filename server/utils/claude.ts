@@ -1,5 +1,27 @@
 import { query } from '@anthropic-ai/claude-agent-sdk'
 
+function categorize(toolName: string): string {
+  const categories: Record<string, string> = {
+    Bash: 'command',
+    Read: 'file',
+    Write: 'file',
+    Edit: 'file',
+    Glob: 'file',
+    Grep: 'search',
+  }
+  return categories[toolName] || 'other'
+}
+
+function summarize(toolName: string, input: Record<string, unknown>): string {
+  if (toolName === 'Bash') return `Run: ${String(input.command || '').slice(0, 50)}`
+  if (toolName === 'Read') return `Read: ${String(input.file_path || '')}`
+  if (toolName === 'Write') return `Write: ${String(input.file_path || '')}`
+  if (toolName === 'Edit') return `Edit: ${String(input.file_path || '')}`
+  if (toolName === 'Glob') return `Find: ${String(input.pattern || '')}`
+  if (toolName === 'Grep') return `Search: ${String(input.pattern || '')}`
+  return toolName
+}
+
 interface FeedItem {
   type: 'text' | 'tool_call' | 'tool_result' | 'result' | 'error'
   content?: string
@@ -24,8 +46,7 @@ export async function runClaude(
   options?: { sessionId?: string; cwd?: string; systemPrompt?: string },
 ) {
   const queryOptions: Record<string, unknown> = {
-    permissionMode: 'bypassPermissions',
-    cwd: options?.cwd || process.cwd(),
+    cwd: options?.cwd || '/data/notes',
   }
   if (options?.sessionId) {
     queryOptions.resume = options.sessionId

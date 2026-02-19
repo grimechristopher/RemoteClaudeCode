@@ -1,3 +1,5 @@
+import { getAuthHeaders } from '../utils/auth'
+
 export interface Session {
   id: string
   title: string
@@ -8,7 +10,10 @@ export interface Session {
 export async function createSession(): Promise<Session> {
   const response = await fetch('/api/sessions', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders()
+    },
     body: '{}',
   })
 
@@ -25,7 +30,10 @@ export async function sendMessage(
 ): Promise<ReadableStreamDefaultReader<Uint8Array>> {
   const response = await fetch('/api/claude', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders()
+    },
     body: JSON.stringify({ sessionId, prompt }),
   })
 
@@ -41,7 +49,9 @@ export async function sendMessage(
 }
 
 export async function getSessions(): Promise<Session[]> {
-  const response = await fetch('/api/sessions')
+  const response = await fetch('/api/sessions', {
+    headers: getAuthHeaders()
+  })
 
   if (!response.ok) {
     throw new Error('Failed to fetch sessions')
@@ -51,7 +61,9 @@ export async function getSessions(): Promise<Session[]> {
 }
 
 export async function getSession(sessionId: string): Promise<Session> {
-  const response = await fetch(`/api/sessions/${sessionId}`)
+  const response = await fetch(`/api/sessions/${sessionId}`, {
+    headers: getAuthHeaders()
+  })
 
   if (!response.ok) {
     throw new Error('Failed to fetch session')
@@ -66,7 +78,10 @@ export async function updateSession(
 ): Promise<Session> {
   const response = await fetch(`/api/sessions/${sessionId}`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders()
+    },
     body: JSON.stringify(data),
   })
 
@@ -80,6 +95,7 @@ export async function updateSession(
 export async function deleteSession(sessionId: string): Promise<void> {
   const response = await fetch(`/api/sessions/${sessionId}`, {
     method: 'DELETE',
+    headers: getAuthHeaders()
   })
 
   if (!response.ok) {
