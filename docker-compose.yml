@@ -52,6 +52,7 @@ services:
       - ${REPOS_PATH}:/data/repos
       - ${CLAUDE_CONFIG}/.credentials.json:/tmp/.credentials.json:ro
       - claude_config_data:/home/node/.claude
+      - ./mcp-servers:/app/mcp-servers:ro
     networks:
       - internal
       - internet

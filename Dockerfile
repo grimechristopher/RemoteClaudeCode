@@ -58,6 +58,13 @@ if [ -f /tmp/.credentials.json ]; then\n\
   chmod 600 /home/node/.claude/.credentials.json\n\
 fi\n\
 \n\
+# Copy MCP servers config if available\n\
+if [ -f /app/mcp-servers/mcp-config.json ]; then\n\
+  cp /app/mcp-servers/mcp-config.json /home/node/.claude/mcp_servers.json\n\
+  chown node:node /home/node/.claude/mcp_servers.json\n\
+  chmod 644 /home/node/.claude/mcp_servers.json\n\
+fi\n\
+\n\
 # Drop privileges and start application as node user\n\
 exec gosu node "$@"\n\
 ' > /entrypoint.sh && chmod +x /entrypoint.sh
